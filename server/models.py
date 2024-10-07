@@ -2,7 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
 from sqlalchemy.orm import validates
 from sqlalchemy.ext.associationproxy import association_proxy
-from sqlalchemy_serializer import SerializerMixin
+
 
 metadata = MetaData(naming_convention={
     "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
@@ -11,7 +11,7 @@ metadata = MetaData(naming_convention={
 db = SQLAlchemy(metadata=metadata)
 
 
-class Hero(db.Model, SerializerMixin):
+class Hero(db.Model):
     __tablename__ = 'heroes'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -37,7 +37,7 @@ class Hero(db.Model, SerializerMixin):
         return f'<Hero {self.id}, {self.name}, {self.super_name}>'
 
 
-class Power(db.Model, SerializerMixin):
+class Power(db.Model):
     __tablename__ = 'powers'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -55,7 +55,7 @@ class Power(db.Model, SerializerMixin):
             "description":self.description,
         }
     # add validation
-    def validate(self):
+    def validate(self,description):
         if not self.description:
             raise ValueError("Description must be present.")
         if len(self.description) < 20:
@@ -65,7 +65,7 @@ class Power(db.Model, SerializerMixin):
         return f'<Power {self.id},{self.name},{self.description}>'
 
 
-class HeroPower(db.Model, SerializerMixin):
+class HeroPower(db.Model):
     __tablename__ = 'hero_powers'
 
     id = db.Column(db.Integer, primary_key=True)
