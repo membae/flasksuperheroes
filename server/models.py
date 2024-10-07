@@ -59,7 +59,7 @@ class Power(db.Model, SerializerMixin):
         if not self.description:
             raise ValueError("Description must be present.")
         if len(self.description) < 20:
-            raise ValueError("Description must be at least 20 characters long.")
+            raise ValueError("validation errors")
 
     def __repr__(self):
         return f'<Power {self.id},{self.name},{self.description}>'
@@ -91,6 +91,6 @@ class HeroPower(db.Model, SerializerMixin):
     # add validation
     def validate(self):
         if self.strength not in ['Strong', 'Weak', 'Average']:
-            raise ValueError("Strength must be one of the following values: 'Strong', 'Weak', 'Average'.")
+            raise ValueError("validation errors")
     def __repr__(self):
         return f'<HeroPower {self.id},{self.strength},{self.hero.name},{self.power.name}>'

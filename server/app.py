@@ -87,19 +87,19 @@ def update_power(id):
 
     data = request.get_json()
 
-    # Update the description field if it's in the request data
-    if 'description' in data:
-        power.description = data['description']
-        
-        # Validate that the description is at least 20 characters
-        if not isinstance(power.description, str) and len(power.description) < 20:
-            return {"errors": ["Description must be at least 20 characters"]}, 400
-
-    # Validate and update if there is any other valid field
-    if 'name' in data:
-        power.name = data['name']
 
     try:
+        # Update the description field if it's in the request data
+        if 'description' in data:
+            power.description = data['description']
+            
+            # Validate that the description is at least 20 characters
+            if not isinstance(power.description, str) and len(power.description) < 20:
+                return {"errors": ["Description must be at least 20 characters"]}, 400
+
+        # Validate and update if there is any other valid field
+        if 'name' in data:
+            power.name = data['name']
         # Assuming `validate` checks the power's attributes for validation
         power.validate()
         db.session.commit()
@@ -124,31 +124,13 @@ def update_power(id):
 def create_hero_power():
     data = request.get_json()
 
-    # Validate that required fields are present
     strength = data.get('strength')
     hero_id = data.get('hero_id')
     power_id = data.get('power_id')
 
-    # Check if strength, hero_id, and power_id are provided
     if not all([strength, hero_id, power_id]):
         return {"error": "strength, hero_id, and power_id are required"}, 400
 
-    # Validate strength value
-    allowed_strengths = {"Strong", "Weak", "Average"}
-    if strength not in allowed_strengths:
-        return {"error": "Strength must be one of: Strong, Weak, Average"}, 400
-
-    # Fetch the Hero and Power objects to validate their existence
-    hero = Hero.query.get(hero_id)
-    power = Power.query.get(power_id)
-
-    if not hero:
-        return {"error": "Hero not found"}, 404  # Hero does not exist
-
-    if not power:
-        return {"error": "Power not found"}, 404  # Power does not exist
-
-    # Create new HeroPower object
     new_hero_power = HeroPower(
         strength=strength,
         hero_id=hero_id,
@@ -156,13 +138,15 @@ def create_hero_power():
     )
 
     try:
+        new_hero_power.validate()  # Validate strength
         db.session.add(new_hero_power)
         db.session.commit()
-        return new_hero_power.to_dict(), 200  # Ensure we return 201 status code
+        return new_hero_power.to_dict(), 200
+    except ValueError as ve:
+        return {"errors": [str(ve)]}, 400  # Return error in a list
     except Exception as e:
-        db.session.rollback()  # Rollback if there's an error
-        return {" errors": "validation errors"}, 500
-
+        db.session.rollback()
+        return {"error": "Validation errors"}, 500
 
 
 
