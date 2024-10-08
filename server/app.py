@@ -101,11 +101,14 @@ def update_power(id):
         if 'name' in data:
             power.name = data['name']
         # Assuming `validate` checks the power's attributes for validation
-        power.validate()
         db.session.commit()
 
         # Return the updated power's dictionary representation
         return power.to_dict(), 200
+    
+    
+
+
 
     except Exception:
         # Return the specified error message for validation failure
