@@ -22,7 +22,7 @@ class Hero(db.Model):
     hero_powers = db.relationship("HeroPower", back_populates="hero", cascade='all, delete-orphan')
 
     # Add serialization rules
-    serialize_rules = ('-hero_powers.hero',)
+   
 
     def to_dict(self):
         hero_dict = {
@@ -47,7 +47,7 @@ class Power(db.Model):
     # add relationship
     hero_powers=db.relationship("HeroPower",back_populates='power',cascade='all, delete-orphan')
     # add serialization rules
-    serialize_rules = ('-hero_powers.power',)
+    
     def to_dict(self):
         return {
             "id":self.id,
@@ -78,7 +78,7 @@ class HeroPower(db.Model):
     hero=db.relationship('Hero',back_populates="hero_powers")
     power=db.relationship('Power',back_populates="hero_powers")
     # add serialization rules
-    serialize_rules = ('-hero.powers', '-power.heroes')
+  
     def to_dict(self):
         return {
             "id":self.id,
