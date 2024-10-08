@@ -95,7 +95,7 @@ def update_power(id):
             
             # Validate that the description is at least 20 characters
             if not isinstance(power.description, str) and len(power.description) < 20:
-                return {"errors": ["Description must be at least 20 characters"]}, 400
+                return {"errors": ["validation errors"]}, 400
 
         # Validate and update if there is any other valid field
         if 'name' in data:
@@ -130,6 +130,9 @@ def create_hero_power():
 
     if not all([strength, hero_id, power_id]):
         return {"error": "strength, hero_id, and power_id are required"}, 400
+    if strength not in['Strong','Weak','Average']:
+        response_body={'errors':["validation errors"]}
+        return make_response(response_body,400)
 
     new_hero_power = HeroPower(
         strength=strength,
@@ -138,7 +141,7 @@ def create_hero_power():
     )
 
     try:
-        new_hero_power.validate()  # Validate strength
+        
         db.session.add(new_hero_power)
         db.session.commit()
         return new_hero_power.to_dict(), 200
